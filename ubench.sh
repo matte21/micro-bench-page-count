@@ -30,6 +30,10 @@ for i in {1..1000}; do
         row+="$latency_secs,"
     done
     echo $row >> $raw_file
+
+    if (( i % 250 == 0 )); then
+        echo "Done $i/4 of iterations."
+    fi
 done
 
 readonly avg_file="cgrps_lat_ubench_avg_usecs.csv"
