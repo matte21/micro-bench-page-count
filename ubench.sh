@@ -23,6 +23,15 @@ declare -a footprints=(
 readonly raw_file="raw_data_seconds.csv"
 echo "10 MiB, 1 GiB, 10 GiB, 50 GiB," > $raw_file
 
+# Warm up runs to scale up cpu frequency because on this server I can't lock
+# the frequency to the maximum, for some reason.
+for i in {1..100}; do
+    for footprint in "${footprints[@]}"; do
+        latency_secs=$(./ubench ${footprint_to_num_pages["$footprint"]} | grep Elapsed | cut -d ' ' -f 3)
+    done
+done
+
+
 for i in {1..1000}; do
     row=""
     for footprint in "${footprints[@]}"; do
@@ -32,7 +41,7 @@ for i in {1..1000}; do
     echo $row >> $raw_file
 
     if (( i % 250 == 0 )); then
-        echo "Done $i/4 of iterations."
+        echo "Done $i/1000 of iterations."
     fi
 done
 
